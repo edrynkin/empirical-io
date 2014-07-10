@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import scipy.stats
-from berry1994.implementation import berry_inversion_vd, shares_vd, berry_estimator_vd, vd_d_to_shares, vd_shares_to_d
+from berry1994.basic_demand_estimation import berry_inversion_vd, shares_vd, berry_estimator_vd, vd_d_to_shares, vd_shares_to_d
 
 
 class TestVerticalDifferentiation(unittest.TestCase):
