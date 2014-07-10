@@ -3,7 +3,7 @@ import unittest
 from berry1994.implementation import berry_inversion, logit_shares, iv_regression, berry_estimator
 
 
-class TestBerry1994(unittest.TestCase):
+class TestSimpleLogit(unittest.TestCase):
 
     @staticmethod
     def generate_data(n, i, k, beta, alpha, s_tilde):
