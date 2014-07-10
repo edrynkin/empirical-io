@@ -12,13 +12,13 @@ def berry_inversion(hats, tildes):
     Returns:
     delta_hat (ndarray, N x 1): estimated deltas (mean utility vector)
     """
-    tildes_minus_hats = lambda delta: tildes(delta) - hats # s(d) = S <=> s(d) - S = 0
-    delta_0 = np.zeros_like(hats) # initial approximation
-    delta_hat = fsolve(tildes_minus_hats,delta_0) # solving for the root
+    tildes_minus_hats = lambda delta: tildes(delta) - hats  # s(d) = S <=> s(d) - S = 0
+    delta_0 = np.zeros_like(hats)  # initial approximation
+    delta_hat = fsolve(tildes_minus_hats, delta_0)  # solving for the root
     return delta_hat
 
 
-def iv_regression(X,Z,p,delta_hat):
+def iv_regression(X, Z, p, delta_hat):
     """
     Given X,Z,p,delta_hat estimate alpha, beta by 2SLS
     Arguments:
@@ -31,20 +31,17 @@ def iv_regression(X,Z,p,delta_hat):
     alpha (double): coefficient on prices (p)
     beta (ndarray, N x K): coefficients on demand determinants (X)
     """
-    eta,_,_,_ = np.linalg.lstsq(Z, p) # first-stage regression
-    p_hat = Z.dot(eta) # fitted values
-    X_prime = np.c_[X,p_hat] # appending fitted prices from the 1st stage to the data matrix
-    theta,_,_,_ = np.linalg.lstsq(X_prime, delta_hat) # second-stage regression
-    print "delta_hat", delta_hat
-    print "p_hat", p_hat
-    print "theta", theta
-    beta, alpha = np.split(theta, [np.size(theta)-1]) # split the estimated coefficient vector ([1..N-1],[N])
+    eta, _, _, _ = np.linalg.lstsq(Z, p)  # first-stage regression
+    p_hat = Z.dot(eta)  # fitted values
+    X_prime = np.c_[X, p_hat]  # appending fitted prices from the 1st stage to the data matrix
+    theta, _, _, _ = np.linalg.lstsq(X_prime, delta_hat)  # second-stage regression
+    beta, alpha = np.split(theta, [np.size(theta)-1])  # split the estimated coefficient vector ([1..N-1],[N])
     return alpha, beta
 
 
 def berry_estimator(X, Z, p, s_hat, s_tilde):
     """
-    Given X,Z,p,delta_hat estimate alpha, beta by 2SLS
+    Given X,Z,p,delta_hat estimate alpha, beta using Berry's procedure
     Arguments:
     X (ndarray, N x K) -- demand determinants (observed characteristics)
     Z (ndarray, N x I) -- instruments
@@ -119,7 +116,7 @@ def berry_inversion_vd(shares, prices, cdf, i_cdf):
     '''
     d = vd_shares_to_d(shares, cdf, i_cdf)
     dp = np.diff(np.insert(prices, 0, 0))
-    psi = np.divide(dp,d)
+    psi = np.divide(dp, d)
     psi = np.cumsum(psi)
     delta = psi - prices
     return delta
@@ -137,10 +134,10 @@ def shares_vd(delta, prices, cdf):
     Returns:
     shares (ndarray, N x 1): vector of computed market shares
     '''
-    dp = np.diff(np.insert(prices,0,0))
+    dp = np.diff(np.insert(prices, 0, 0))
     psi = delta+prices
     dps = np.diff(np.insert(psi, 0, 0))
-    d = np.divide(dp,dps)
+    d = np.divide(dp, dps)
     s_hat = vd_d_to_shares(d, cdf)
 
     return s_hat
