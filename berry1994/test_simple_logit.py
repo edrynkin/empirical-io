@@ -55,3 +55,5 @@ class TestSimpleLogit(unittest.TestCase):
         self.assertTrue(beta_close)
 
 
+if __name__ == '__main__':
+    unittest.main()

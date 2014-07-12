@@ -31,3 +31,7 @@ class TestVerticalDifferentiation(unittest.TestCase):
         s_hat = shares_vd(delta_hat,prices, self.cdf)
         correct = np.allclose(shares,s_hat)
         self.assertTrue(correct)
+
+
+if __name__ == '__main__':
+    unittest.main()
