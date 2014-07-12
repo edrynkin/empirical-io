@@ -12,8 +12,7 @@ class TestVerticalDifferentiation(unittest.TestCase):
         self.beta = 15
         self.cdf  = lambda x: scipy.stats.uniform.cdf(x,scale=1,loc=0.5)
         self.icdf = lambda x: scipy.stats.uniform.ppf(x,scale=1,loc=0.5)
-        self.X, self.Z, self.p, self.s_hat, self.delta = \
-            self.generate_data(self.N, self.beta, self.cdf)
+
 
     def test_cdf(self):
         self.assertEqual(0.5,self.cdf(self.icdf(0.5)))
