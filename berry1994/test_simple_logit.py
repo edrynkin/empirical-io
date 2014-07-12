@@ -1,7 +1,11 @@
 import numpy as np
 import unittest
-from berry1994.basic_demand_estimation import berry_inversion, logit_shares, iv_regression, berry_estimator
+from basic_demand_estimation import berry_inversion, logit_shares, iv_regression, berry_estimator
 
+"""
+How to run?
+% python -m unittest test_simple_logit
+"""
 
 class TestSimpleLogit(unittest.TestCase):
 
