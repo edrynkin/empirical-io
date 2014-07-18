@@ -19,10 +19,10 @@ of s(p) and ds/dp the approximations for mark-ups (a J-by-1 vector) are estimate
 
 IMPORTANT NOTE 
 
-Since no game is solved during the simulations, the algorythm doesn't guarantee 
+Since no game is solved during the simulations, the algorithm doesn't guarantee
 the existence of the log-linear MC function 
 log(mc_j) = w_j*gamma + omega_j (3.1, p.853 in BLP) that will generate simulated
-prices. However, it is not necessry for the estimation of the demand for the 
+prices. However, it is not necessary for the estimation of the demand for the
 marginal costs to have this specification to have this form. The existence of SOME 
 marginal cost function that will lead to such behavior in the equilibrium can
 be easily guaranteed by the use of Dirac's delta-function. The equilibrium MC
@@ -56,7 +56,7 @@ import numpy as np
 
 
 def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10, 
-                  alpha = 2, Std_e = 5, Reservation_utility = 0, 
+                  alpha = 2, Std_e = 5, reservation_utility = 0,
                   parsing_size = 10000, Mean_X = None, beta = None, 
                   Sigma_X = None, Sigma_Xi_p = None, Sigma_v = None):
     """
@@ -70,7 +70,7 @@ def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10,
     Mean_p -- mean of the price (a positive real number)
     alpha -- slope of the utility (a positive real number)
     Std_e -- standard deviation of the random utility (a positive real number)
-    Reservation_utility -- reservation utility (a real number)
+    reservation_utility -- reservation utility (a real number)
     parsing size -- size of the blocks used to parse the data (a positive integer number)
     Mean_X -- mean of the observables (a real (K,) vector)
     beta -- mean of the random coefficients (a real (K,) vector)
@@ -93,21 +93,21 @@ def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10,
     
     """
     # Default initialization of the variables
-    if Mean_X == None:
+    if Mean_X is None:
         Mean_X = np.zeros((K,))
-    if beta == None:
+    if beta is None:
         beta = np.ones((K,))
-    if Sigma_X == None:
+    if Sigma_X is None:
         Correlations_X = np.eye(K) # Correlation structure of observable characteristics
         Std_X = np.ones((K,)) # Standard deviations of observable characteristics
         Sigma_X = (np.eye(K) * Std_X).dot(Correlations_X).dot(np.eye(K) * Std_X)
-    if Sigma_Xi_p == None:
+    if Sigma_Xi_p is None:
         Std_Xi = 2 # Standard deviation of the unobservable characteristics
         Std_p = 1 # Standard deviation of the prices
         Correlation_Xi_p = 0.9 # Correlation between unobservable characteristics and price
         Sigma_Xi_p = np.array([[Std_Xi**2, Correlation_Xi_p*Std_Xi*Std_p],
                         [Correlation_Xi_p*Std_Xi*Std_p, Std_p**2]])
-    if Sigma_v == None:
+    if Sigma_v is None:
         Correlations_v = np.eye(K) # Correlation structure of the random coefficients
         Std_v = np.ones((K,)) # Standard deviations of the random coefficients
         Sigma_v = (np.eye(K) * Std_v).dot(Correlations_v).dot(np.eye(K) * Std_v)
@@ -129,6 +129,7 @@ def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10,
     C = np.array(beta, ndmin=2).dot(X.T) # Mean utility from observables (X*beta)
     
     # Random choice simulations
+    dp = 1e-3 # Finite difference step
     for i in xrange(int(N/parsing_size)):
         # Random coefficient individual specific disturbances (parsing_size-by-K matrix): 
         v = np.random.multivariate_normal(np.zeros((K,)), Sigma_v, parsing_size) 
@@ -146,8 +147,7 @@ def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10,
         T = T[0] * [u.T > 0]
         shares = shares + np.sum(T[0], axis=1) # updating of shares on the parsing step
         # Finite difference derivative approximation:
-        dp = 1e-3 # Finite difference step
-        u1 = u + alpha*dp # Utility of agent i from good j at price vector 
+        u1 = u + alpha*dp # Utility of agent i from good j at price vector
                           # p'_j = (p_1, ..., p_(j-1), p_j-dp, p_(j+1), ..., p_J)
                           # are stored at the (i,j)-th entry of the matrix
         u2 = u - alpha*dp # Utility of agent i from good j at price vector 
@@ -180,4 +180,5 @@ def generate_data(N = int(1e6), J = 50, K = 3, Mean_Xi = 10, Mean_p = 10,
                      X, np.reshape(MC,(-1,1)))) # The output matrix
     return Out              
 
-
+A = generate_data()
+print A
