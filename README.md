@@ -5,7 +5,7 @@ We are looking to replicate some of the most important empirical industrial orga
 
 This repository is meant to host the Python code that we write to replicate these papers.
 
-**Contributors:** Evgeni Drynkin, Marat Salikhov, Denis Shishkin, Anna Trubnikova.
+**Contributors:** Evgeni Drynkin, Marat Salikhov, Ksenia Shakhgildyan, Denis Shishkin, Anna Trubnikova.
 
 A tentative plan:
 
