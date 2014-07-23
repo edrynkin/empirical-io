@@ -5,7 +5,7 @@ import numpy as np
 import itertools
 
 def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i: -0.02*x**2 - i*2), beta = 0.95,
-                   num_in_grid = [100, 20, 20], num_sim_data = 1e2, 
+                   num_in_grid = [30, 5, 5], num_sim_data = 50, 
                    tolerance = 1e-1, F = None, x0 = None):
     if F == None:
         g = 0.5772 # Euler's constant
@@ -31,7 +31,7 @@ def iteration(u, beta, V, S, x_high):
 def iterator(u, beta, f, lower, upper, num_in_grid, num_sim_data = 1e4, 
              tolerance = 1e-1, x_high = None, x0 = None, M = None):
     if x_high == None:
-        x_high = 20*upper[0] # maximal possible value of x
+        x_high = 5*upper[0] # maximal possible value of x
     if x0 == None:
         x0 = (lower + upper)/2
     V = lambda x, e1, e2: 0 # starting point for contraction algorithm
@@ -52,7 +52,7 @@ def iterator(u, beta, f, lower, upper, num_in_grid, num_sim_data = 1e4,
         I0 = I1 # values on the grid before iteration
         U = iteration(u, beta, V, S, x_high) # iteration step
         I1 = U(X, E0, E1) # values on the grid after iteration
-        V = lambda x, e0, e1: griddata(np.array([X, E0, E1]).T, I1, np.array([x, e0, e1]).T) # interpolation
+        V = lambda x, e0, e1: griddata(np.array([X, E0, E1]).T, I1, np.array([x, e0, e1]).T, fill_value = -100) # interpolation
         m = np.abs(I1-I0).max() # divergence
         print 'iteration ', iter_num, ', divergence ', m
     return V
@@ -142,4 +142,4 @@ def simulated_integral(f, S):
     return np.mean([f(row) for row in S], axis=0)
     
     
-#V = value_function()
+V = value_function()
