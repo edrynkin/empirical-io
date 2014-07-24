@@ -4,7 +4,7 @@ from scipy.interpolate import griddata
 import numpy as np
 import itertools
 
-def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i: -0.02*x**2 - i*2), beta = 0.95,
+def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i: -0.2*x**2 - i*2), beta = 0.95,
                    num_in_grid = [30, 5, 5], num_sim_data = 50, 
                    tolerance = 1e-1, F = None, x0 = None):
     if F == None:
@@ -23,8 +23,8 @@ def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i:
     
 def iteration(u, beta, V, S, x_high):
     EV = lambda y: beta*simulated_integral(lambda x: V(x[0]+np.array(y), x[1]+np.zeros(np.size(y)), x[2]+np.zeros(np.size(y))), S) # discounted EV_{t+1}(x)     
-    V0 = lambda x, e0, e1: (u(x,0) + EV(x) + e0)*(x<x_high) # V_t(x, e0, e1|i=0)   
-    V1 = lambda x, e0, e1: (u(x,1) + EV(0) + e1)*(x<x_high) # V_t(x, e0, e1|i=1)   
+    V0 = lambda x, e0, e1: (u(x,0) + EV(x) + e0) # V_t(x, e0, e1|i=0)   
+    V1 = lambda x, e0, e1: (u(x,1) + EV(0) + e1) # V_t(x, e0, e1|i=1)   
     U = lambda x, e0, e1: np.array([V0(x, e0, e1), V1(x, e0, e1)]).max(axis=0) # V(x, e0, e1)   
     return U
     
