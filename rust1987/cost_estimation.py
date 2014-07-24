@@ -27,11 +27,11 @@ def logit(u, beta, EV):
 
 def estimate_costs(engines, cost_func, beta):
     theta_3 = estimate_transition_probability(engines)
-    grid_t = np.mgrid[0:1.1:0.2, 0:1.1:0.2, 0:1.1:0.2]
+    grid_t = np.mgrid[0:1.1:0.25, 0:1.1:0.25, 0:1.1:0.25]
     dimensions = grid_t.shape
     d = dimensions[0]
     N = dimensions[1]
-    grid_RC = np.mgrid[0:1.1:0.2]
+    grid_RC = np.mgrid[0:1.1:0.25]
     max_log_likelihood = float("-inf")
     arg_max_log_likelihood = None
     iter_number = 0
@@ -48,12 +48,13 @@ def estimate_costs(engines, cost_func, beta):
                 x = engine[0]
                 i = engine[1]
                 u = utility(x, RC, cost_func, theta_1)
-                log_probability_measure = logit(u.T, beta, EV[x.astype(int)])
+                log_probability_measure = logit(u, beta, EV[x.astype(int)])
                 log_probability = log_probability_measure[:, i.astype(int)]
                 log_likelihood += np.sum(log_probability)
             if max_log_likelihood < log_likelihood:
                 max_log_likelihood = log_likelihood
                 print max_log_likelihood
                 arg_max_log_likelihood = (theta_1, RC)
+                print arg_max_log_likelihood
     t1, rc = arg_max_log_likelihood
     return t1, rc, theta_3

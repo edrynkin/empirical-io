@@ -1,6 +1,6 @@
 import numpy as np
 
-MAX_MILEAGE = 30
+MAX_MILEAGE = 10
 
 
 def transition(x, i, theta_3):
@@ -11,12 +11,14 @@ def transition(x, i, theta_3):
 def utility(x, RC, cost_func, theta_1):
     zx = np.zeros_like(x)
     u = np.vstack((-1*cost_func(x, theta_1), (-1*(RC+cost_func(zx, theta_1)))))
-    return u
+    return u.T
 
 
 def control(x_t, eps_t, theta_1, RC, cost_func, beta, EV):
     u_t = utility(np.array([x_t]), RC, cost_func, theta_1).T
-    v_t = u_t + eps_t + beta * EV[x_t]
+    ev = EV[x_t].ravel()
+    u_t = u_t.ravel()
+    v_t = u_t + eps_t + beta * ev
     i_t = np.argmax(v_t)
     return i_t
 
@@ -34,18 +36,19 @@ def expected_value(theta_3, RC, cost_func, theta_1, beta):
     EV_1 = np.zeros((MAX_MILEAGE+1, 2))
     X = np.array(list(range(MAX_MILEAGE+1)))
     run_iteration = True
+    num_iter = 0
     while run_iteration:
         for i in xrange(2):
             for x in X:
-                p = transition_probability_distribution(x,i,theta_3)
+                p = transition_probability_distribution(x, i, theta_3)
                 u = utility(X, RC, cost_func, theta_1)
-                u = u.T + beta*EV_0
+                u = u + beta*EV_0
                 u = np.exp(u)
                 u = np.log(np.sum(u, 1))
                 value = u.dot(p)
                 EV_1[x][i] = value
         run_iteration = not np.allclose(EV_1, EV_0)
-        EV_0 = EV_1
+        EV_0 = np.copy(EV_1)
     return EV_1
 
 
