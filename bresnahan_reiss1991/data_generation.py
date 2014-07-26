@@ -19,11 +19,11 @@ def generate_data(alpha, beta, gamma, delta, kappa, M):
     n: M x 1 vector of the firm numbers
     W: M x L matrix of cost determinants
     X: M x (K + L) matrix of cost and demand shifters
-    Y: M x J matrix of market size determinants
+    Y: M x (J + 1) matrix of market size determinants
     Z: M x K matrix of demand shifters
     '''
     J, K, KL, L, N = compute_shapes(alpha, beta, delta, kappa)
-    Y = np.random.uniform(size=(M, J), low=0.02, high=0.1)
+    Y = np.random.uniform(size=(M, J + 1), low=0.02, high=0.1)
     X = np.random.uniform(size=(M, KL), low=0.02, high=0.1)
     W = X[:, K:]
     Z = X[:, :K]

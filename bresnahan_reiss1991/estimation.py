@@ -7,6 +7,7 @@ from scipy.stats import norm
 def extract_shapes(W, X, Y):
     M, KL = X.shape
     _, J = Y.shape
+    J -= 1
     _, L = W.shape
     return J, KL, L, M
 
@@ -21,7 +22,9 @@ def log_likelihood(W, X, Y, n, N, theta):
     probabilities = norm.cdf(P) # compute F (F (neg_inf) = 0, F (pos_inf) = 1)
     probabilities = np.fliplr(np.diff(np.fliplr(probabilities), axis=1)) # fliplr to get F(P_N) - F(P_{N+1})
     indices = n.astype(int) - 1
-    p = np.choose(indices, probabilities.T)  # likelihood[m, n(m)] for m in 1..M; n(m) -- number of firms in a market
+    p = np.choose(indices, probabilities.T) # likelihood[m, n(m)] for m in 1..M; n(m) -- number of firms in a market
+    p = p * (np.array([p > 1e-40])) + 1e-40 * np.array([p < 1e-40])
+
     log_l = np.sum(np.log(p))
     return -1.0 * log_l
 

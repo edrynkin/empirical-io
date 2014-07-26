@@ -8,7 +8,8 @@ def compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa):
     c_alpha = alpha * signs # to get alpha_1 - alpha_2 - alpha_3 - ... - alpha_N after cumsum
     c_alpha = np.cumsum(c_alpha)
     c_gamma = np.cumsum(gamma)
-    S = Y.dot(kappa)
+    kappa_2 = np.insert(kappa, 0, 1.0)
+    S = Y.dot(kappa_2)
     S = np.reshape(S, newshape=(M, 1))
     Xb = X.dot(beta)
     Xb = np.reshape(Xb, newshape=(M, 1))
