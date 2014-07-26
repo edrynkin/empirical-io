@@ -13,7 +13,7 @@ def extract_shapes(W, X, Y):
 
 def log_likelihood(W, X, Y, n, N, theta):
     J, KL, L, M = extract_shapes(W, X, Y)
-    alpha, beta, gamma, delta, kappa, _ = split_theta(theta, N, KL, L, J)
+    alpha, beta, gamma, delta, kappa = split_theta(theta, N, KL, L, J)
     P = compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa)
     pos_inf = float("inf")
     neg_inf = float("-inf")
@@ -21,7 +21,7 @@ def log_likelihood(W, X, Y, n, N, theta):
     probabilities = norm.cdf(P) # compute F (F (neg_inf) = 0, F (pos_inf) = 1)
     probabilities = np.fliplr(np.diff(np.fliplr(probabilities), axis=1)) # fliplr to get F(P_N) - F(P_{N+1})
     indices = n.astype(int) - 1
-    p = np.choose(indices, probabilities.T)
+    p = np.choose(indices, probabilities.T)  # likelihood[m, n(m)] for m in 1..M; n(m) -- number of firms in a market
     log_l = np.sum(np.log(p))
     return -1.0 * log_l
 
@@ -29,7 +29,7 @@ def log_likelihood(W, X, Y, n, N, theta):
 def split_theta(theta, N, KL, L, J):
     indices = np.array([N, KL, N, L, J])
     indices = np.cumsum(indices)
-    result = tuple(np.split(theta, indices))
+    result = tuple(np.split(theta, indices)[:-1])
     return result
 
 
