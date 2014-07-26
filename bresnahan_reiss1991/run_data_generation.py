@@ -15,6 +15,7 @@ M = 400
 N = alpha.size
 n, W, X, Y, Z = generate_data(alpha, beta, gamma, delta, kappa, M)
 theta_0 = combine_theta(alpha, beta, gamma, delta, kappa)
+theta_0 += 0.001 * np.random.random(theta_0.shape)
 estimated_params = estimate_by_mle(W, X, Y, n, N, theta_0)
 for a, e in itertools.izip(actual_params, estimated_params):
     print a, " ", e

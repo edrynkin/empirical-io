@@ -5,7 +5,7 @@ def compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa):
     M, _ = W.shape
     signs = -1.0 * np.ones_like(alpha)
     signs[0] = 1.0
-    c_alpha = alpha * signs
+    c_alpha = alpha * signs # to get alpha_1 - alpha_2 - alpha_3 - ... - alpha_N after cumsum
     c_alpha = np.cumsum(c_alpha)
     c_gamma = np.cumsum(gamma)
     S = Y.dot(kappa)

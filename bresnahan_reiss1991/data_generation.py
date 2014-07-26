@@ -3,6 +3,25 @@ from common import compute_expected_profits, compute_shapes
 
 
 def generate_data(alpha, beta, gamma, delta, kappa, M):
+    '''
+    Generate data for the Bresnahan-Reiss model.
+    Structural errors are drawn from N(0,1)
+
+    Inputs:
+    alpha: N x 1 vector of all variable costs competition parameters
+    beta: (K + L) x 1 vector of variable costs parameters
+    gamma: N x 1 vector of all fixed costs competition parameters
+    delta: L x 1 vector of all
+    kappa: J x 1 vector of all market size parameters
+    M: double, number of markets
+
+    Outputs:
+    n: M x 1 vector of the firm numbers
+    W: M x L matrix of cost determinants
+    X: M x (K + L) matrix of cost and demand shifters
+    Y: M x J matrix of market size determinants
+    Z: M x K matrix of demand shifters
+    '''
     J, KL, L, N = compute_shapes(alpha, beta, delta, kappa)
     K = KL - L
     Y = np.random.uniform(size=(M, J), low=0.02, high=0.1)
@@ -12,6 +31,6 @@ def generate_data(alpha, beta, gamma, delta, kappa, M):
     P = compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa)
     eps = np.random.normal(size=(M, 1))
     P = P + eps
-    ss = lambda x: N - np.searchsorted(a=x[::-1], v=+0.0)
-    n = np.apply_along_axis(arr=P, func1d=ss, axis=1)
+    ss = lambda x: N - np.searchsorted(a=x[::-1], v=+0.0) # find the last positive element in an array
+    n = np.apply_along_axis(arr=P, func1d=ss, axis=1) # apply to all rows
     return n, W, X, Y, Z
