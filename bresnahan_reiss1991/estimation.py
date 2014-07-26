@@ -14,7 +14,7 @@ def extract_shapes(W, X, Y):
 def log_likelihood(W, X, Y, n, N, theta):
     J, KL, L, M = extract_shapes(W, X, Y)
     alpha, beta, gamma, delta, kappa = split_theta(theta, N, KL, L, J)
-    P = compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa)
+    P = compute_expected_profits(W, X, Y, np.exp(alpha), beta, np.exp(gamma), delta, kappa)
     pos_inf = float("inf")
     neg_inf = float("-inf")
     P = np.c_[pos_inf * np.ones(M), P, neg_inf * np.ones(M)] # pad with positive and negative infinities
@@ -56,9 +56,8 @@ def estimate_by_mle(W, X, Y, n, N, theta_0):
     f = lambda theta: log_likelihood(W, X, Y, n, N, theta)
     J, KL, L, M = extract_shapes(W, X, Y)
     bnds = tuple([(0.0, None) for t in theta_0])
-    result = minimize(f, theta_0, method="tnc", jac=False,
+    result = minimize(f, theta_0, method="Nelder-Mead",
                       tol=1e-8,
-                      options={"maxiter": 30000},
-                      bounds=bnds)
+                      options={"maxiter": 30000})
     theta_hat = result["x"]
     return list(split_theta(theta_hat, N, KL, L, J))
