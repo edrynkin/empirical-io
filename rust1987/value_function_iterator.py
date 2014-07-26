@@ -4,7 +4,23 @@ from scipy.interpolate import griddata
 import numpy as np
 import itertools
 
-def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i: -0.2*x**2 - i*2), beta = 0.95,
+t = [0.5, 0.1, 0.7]
+RC = 10.25
+u = (lambda x,i: -t[0]*x-t[1]*x**2-t[2]*x**3 - RC*i)
+beta = 0.95
+g = 0.5772
+p0 = 0.25
+p1 = 0.75
+F = lambda x, e1, e2: np.exp(-np.exp(-e1-g))*np.exp(-np.exp(-e2-g))*(p0*(1-np.exp(-(5*x)*(x>0))) + p1*(1-np.exp(-(5*(x-1))*(x>1))))
+x_min = 0
+x_max = 2
+e_min = -2
+e_max = 5
+num_in_grid = [30, 5, 5]
+num_sim_data = 50
+tolerance = 1e-1
+
+def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i: -t[0]*x-t[1]*x**2-t[2]*x**3 - RC*i), beta = 0.95,
                    num_in_grid = [30, 5, 5], num_sim_data = 50, 
                    tolerance = 1e-1, F = None, x0 = None):
     if F == None:
@@ -24,7 +40,7 @@ def value_function(x_min = 0, x_max = 5, e_min = -2, e_max = 5, u = (lambda x,i:
 def iteration(u, beta, V, S, x_high):
     EV = lambda y: beta*simulated_integral(lambda x: V(x[0]+np.array(y), x[1]+np.zeros(np.size(y)), x[2]+np.zeros(np.size(y))), S) # discounted EV_{t+1}(x)     
     V0 = lambda x, e0, e1: (u(x,0) + EV(x) + e0) # V_t(x, e0, e1|i=0)   
-    V1 = lambda x, e0, e1: (u(x,1) + EV(0) + e1) # V_t(x, e0, e1|i=1)   
+    V1 = lambda x, e0, e1: (u(0,1) + EV(0) + e1) # V_t(x, e0, e1|i=1)   
     U = lambda x, e0, e1: np.array([V0(x, e0, e1), V1(x, e0, e1)]).max(axis=0) # V(x, e0, e1)   
     return U
     
@@ -52,7 +68,7 @@ def iterator(u, beta, f, lower, upper, num_in_grid, num_sim_data = 1e4,
         I0 = I1 # values on the grid before iteration
         U = iteration(u, beta, V, S, x_high) # iteration step
         I1 = U(X, E0, E1) # values on the grid after iteration
-        V = lambda x, e0, e1: griddata(np.array([X, E0, E1]).T, I1, np.array([x, e0, e1]).T, fill_value = -100) # interpolation
+        V = lambda x, e0, e1: griddata(np.array([X, E0, E1]).T, I1, np.array([x, e0, e1]).T, fill_value = -5000) # interpolation
         m = np.abs(I1-I0).max() # divergence
         print 'iteration ', iter_num, ', divergence ', m
     return V
@@ -142,4 +158,5 @@ def simulated_integral(f, S):
     return np.mean([f(row) for row in S], axis=0)
     
     
-V = value_function()
+V = value_function(x_min, x_max, e_min, e_max, u, beta, num_in_grid, num_sim_data, 
+                   tolerance, F, None)
