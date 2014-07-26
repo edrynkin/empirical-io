@@ -22,8 +22,7 @@ def generate_data(alpha, beta, gamma, delta, kappa, M):
     Y: M x J matrix of market size determinants
     Z: M x K matrix of demand shifters
     '''
-    J, KL, L, N = compute_shapes(alpha, beta, delta, kappa)
-    K = KL - L
+    J, K, KL, L, N = compute_shapes(alpha, beta, delta, kappa)
     Y = np.random.uniform(size=(M, J), low=0.02, high=0.1)
     X = np.random.uniform(size=(M, KL), low=0.02, high=0.1)
     W = X[:, K:]

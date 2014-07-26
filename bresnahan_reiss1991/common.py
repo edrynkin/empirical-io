@@ -23,7 +23,8 @@ def compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa):
 
 def compute_shapes(alpha, beta, delta, kappa):
     N, KL, J, L = alpha.size, beta.size, kappa.size, delta.size
-    return J, KL, L, N
+    K = KL - L
+    return J, K, KL, L, N
 
 
 def combine_theta(alpha, beta, gamma, delta, kappa):
