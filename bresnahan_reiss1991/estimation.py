@@ -57,7 +57,8 @@ def estimate_by_mle(W, X, Y, n, N, theta_0):
     J, KL, L, M = extract_shapes(W, X, Y)
     bnds = tuple([(0.0, None) for t in theta_0])
     result = minimize(f, theta_0, method="tnc", jac=False,
-                      options={"maxiter": 10000},
+                      tol=1e-8,
+                      options={"maxiter": 30000},
                       bounds=bnds)
     theta_hat = result["x"]
     return list(split_theta(theta_hat, N, KL, L, J))
