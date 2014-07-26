@@ -29,7 +29,6 @@ def generate_data(alpha, beta, gamma, delta, kappa, M):
     Z = X[:, :K]
     P = compute_expected_profits(W, X, Y, alpha, beta, gamma, delta, kappa)
     eps = np.random.normal(size=(M, 1))
-    P = P + eps
-    ss = lambda x: N - np.searchsorted(a=x[::-1], v=+0.0) # find the last positive element in an array
-    n = np.apply_along_axis(arr=P, func1d=ss, axis=1) # apply to all rows
+    P = P + eps# find the last positive element in an array
+    n = np.sum(P > 0, axis=1) # apply to all rows
     return n, W, X, Y, Z
